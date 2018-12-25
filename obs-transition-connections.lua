@@ -1,35 +1,35 @@
-obs         = obslua
+obs = obslua
 default_transition_name = ""
 curr_scene_name = ""
 
 ----------------------------------------------------------
 
 function find_source_by_name_in_list(source_list, name)
-  for i, source in pairs(source_list) do
-    source_name = obs.obs_source_get_name(source)
-    if source_name == name then
-      return source
-    end
-  end
+	for i, source in pairs(source_list) do
+		source_name = obs.obs_source_get_name(source)
+		if source_name == name then
+			return source
+		end
+	end
 
-  return nil
+	return nil
 end
 
 function transition_stoped(cd)
 	local ct = obs.obs_frontend_get_current_transition()
 	local curr_transition = obs.obs_source_get_name(ct)
 	obs.obs_source_release(ct)
-	
+
 	if curr_transition ~= default_transition_name then
-  	local transitions = obs.obs_frontend_get_transitions()
-  	local obj_transition = find_source_by_name_in_list(transitions, default_transition_name)
-  	if obj_transition ~= nil then
-  		obs.obs_frontend_set_current_transition(obj_transition)
-  	else
-  		obs.script_log(obs.LOG_WARNING, "Transition does not exists: " .. default_transition_name)
-  	end 
-  	obs.source_list_release(transitions)
-  end
+		local transitions = obs.obs_frontend_get_transitions()
+		local obj_transition = find_source_by_name_in_list(transitions, default_transition_name)
+		if obj_transition ~= nil then
+			obs.obs_frontend_set_current_transition(obj_transition)
+		else
+			obs.script_log(obs.LOG_WARNING, "Transition does not exists: " .. default_transition_name)
+		end
+		obs.source_list_release(transitions)
+	end
 end
 
 function source_deactivated(cd)
@@ -41,17 +41,17 @@ end
 
 function source_activated(cd)
 	if curr_scene_name == "" then
-  	local currentScene = obs.obs_frontend_get_current_scene()
-  	curr_scene_name = obs.obs_source_get_name(currentScene)
-  	obs.obs_source_release(currentScene)
+		local currentScene = obs.obs_frontend_get_current_scene()
+		curr_scene_name = obs.obs_source_get_name(currentScene)
+		obs.obs_source_release(currentScene)
 	end
-	
+
 	local source = obs.calldata_source(cd, "source")
 	if source ~= nil then
 		local source_id = obs.obs_source_get_id(source)
 		if source_id == "scene" then
 			local next_scene_name = obs.obs_source_get_name(source)
-			
+
 			local set_transition = default_transition_name
 			if curr_scene_name == "Starting" and next_scene_name == "Playing" then
 				set_transition = "Intro"
@@ -59,26 +59,26 @@ function source_activated(cd)
 			if curr_scene_name == "Starting" and next_scene_name == "Developing" then
 				set_transition = "Intro"
 			end
-			
+
 			if set_transition ~= default_transition_name then
-    		local transitions = obs.obs_frontend_get_transitions()
-  			local obj_transition = find_source_by_name_in_list(transitions, set_transition)
-  			if obj_transition ~= nil then
---  				local sh = obs.obs_source_get_signal_handler(obj_transition)
---          obs.signal_handler_connect(sh, "transition_stop", function(source)
---            obs.remove_current_callback()
---            local transitions = obs.obs_frontend_get_transitions()
---            local obj_transition = find_source_by_name_in_list(transitions, default_transition_name)
---            obs.obs_frontend_set_current_transition(obj_transition)
---            obs.source_list_release(transitions)
---        	end)
-        	obs.obs_frontend_set_current_transition(obj_transition)
-  				obs.obs_transition_start(obj_transition, obs.OBS_TRANSITION_MODE_AUTO, 0, source)
-  			else
-  				obs.script_log(obs.LOG_WARNING, "Transition does not exists: " .. set_transition)
-  			end
-  			obs.source_list_release(transitions)
-  		end
+				local transitions = obs.obs_frontend_get_transitions()
+				local obj_transition = find_source_by_name_in_list(transitions, set_transition)
+				if obj_transition ~= nil then
+					--  				local sh = obs.obs_source_get_signal_handler(obj_transition)
+					--          obs.signal_handler_connect(sh, "transition_stop", function(source)
+					--            obs.remove_current_callback()
+					--            local transitions = obs.obs_frontend_get_transitions()
+					--            local obj_transition = find_source_by_name_in_list(transitions, default_transition_name)
+					--            obs.obs_frontend_set_current_transition(obj_transition)
+					--            obs.source_list_release(transitions)
+					--        	end)
+					obs.obs_frontend_set_current_transition(obj_transition)
+					obs.obs_transition_start(obj_transition, obs.OBS_TRANSITION_MODE_AUTO, 0, source)
+				else
+					obs.script_log(obs.LOG_WARNING, "Transition does not exists: " .. set_transition)
+				end
+				obs.source_list_release(transitions)
+			end
 		end
 	end
 end
@@ -100,16 +100,16 @@ end
 -- can change for the entire script module itself
 function script_properties()
 	props = obs.obs_properties_create()
-	
+
 	local s = obs.obs_properties_add_list(props, "default_transition", "Default Transition", obs.OBS_COMBO_TYPE_EDITABLE, obs.OBS_COMBO_FORMAT_STRING)
 	local transitions = obs.obs_frontend_get_transitions()
-  for i, source in pairs(transitions) do
-    name = obs.obs_source_get_name(source)
-    obs.obs_property_list_add_string(s, name, name)
-  end
+	for i, source in pairs(transitions) do
+		name = obs.obs_source_get_name(source)
+		obs.obs_property_list_add_string(s, name, name)
+	end
 	obs.source_list_release(transitions)
-	
-	
+
+
 	return props
 end
 
