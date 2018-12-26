@@ -15,7 +15,7 @@ Example:
 2. Add script to OBS  
 (1) In OBS main menu, open "Tools">"Scripts"  
 ![Open scripts window](https://raw.githubusercontent.com/tomaae/obs-transition-connections/github-resources/obs_scripts_open.png)  
-(2) Click "+: button and add script "obs-transition-connections.lua"  
+(2) Click "+" button and add script "obs-transition-connections.lua"  
 
 3. Configure OBS Transition Connections  
 (1) Select default transition  
