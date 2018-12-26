@@ -114,6 +114,10 @@ end
 -- can change for the entire script module itself
 
 function transition_add(props, p, set)
+	if default_transition_name == "" then
+		return
+	end
+	
 	table.insert(transition_map_s,"")
 	table.insert(transition_map_t,"")
 	table.insert(transition_map_r,"")
@@ -136,7 +140,9 @@ function transition_add(props, p, set)
 	local transitions = obs.obs_frontend_get_transitions()
 	for i, source in pairs(transitions) do
 		name = obs.obs_source_get_name(source)
-		obs.obs_property_list_add_string(r, name, name)
+		if name ~= default_transition_name then
+			obs.obs_property_list_add_string(r, name, name)
+		end
 	end
 	obs.source_list_release(transitions)
 
@@ -176,7 +182,9 @@ function script_properties()
 		local transitions = obs.obs_frontend_get_transitions()
 		for i, source in pairs(transitions) do
 			name = obs.obs_source_get_name(source)
-			obs.obs_property_list_add_string(r, name, name)
+			if name ~= default_transition_name then
+				obs.obs_property_list_add_string(r, name, name)
+			end
 		end
 		obs.source_list_release(transitions)
 		i = i + 1
