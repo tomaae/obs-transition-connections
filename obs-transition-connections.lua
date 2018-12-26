@@ -34,6 +34,10 @@ end
 
 -- Reset transition to default if needed
 function transition_stoped(cd)
+	if default_transition_name == "" then
+		return
+	end
+	
 	local ct = obs.obs_frontend_get_current_transition()
 	local curr_transition = obs.obs_source_get_name(ct)
 	obs.obs_source_release(ct)
