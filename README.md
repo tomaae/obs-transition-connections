@@ -1,4 +1,4 @@
-# Open Broadcaster Software Transition Connections
+# Open Broadcaster Software - Transition Connections
 OBS Instant Replay is a script for Open Broadcaster Software which allows you to set up transition connections between 2 specific scenes.  
 
 Example:
