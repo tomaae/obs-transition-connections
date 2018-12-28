@@ -1,6 +1,7 @@
 obs = obslua
 default_transition_name = ""
 curr_scene_name = ""
+transition_playing = 0 -- Workaround for OBS bug #1333
 transition_map_s = {}
 transition_map_t = {}
 transition_map_r = {}
@@ -63,7 +64,8 @@ function source_deactivated(cd)
 	if default_transition_name == "" then
 		return
 	end
-	transition_stoped()
+	transition_playing = 0 -- Workaround for OBS bug #1333
+	--transition_stoped() -- Workaround for OBS bug #1333
 end
 
 -- Change transition if needed
@@ -71,6 +73,10 @@ function source_activated(cd)
 	if default_transition_name == "" then
 		return
 	end
+	
+	if transition_playing == 1 then -- Workaround for OBS bug #1333
+		return -- Workaround for OBS bug #1333
+	end -- Workaround for OBS bug #1333
 
 	local source = obs.calldata_source(cd, "source")
 	if source ~= nil then
@@ -86,8 +92,14 @@ function source_activated(cd)
 				end
 				i = i + 1
 			end
-
-			if set_transition ~= default_transition_name then
+			
+    	local ct = obs.obs_frontend_get_current_transition() -- Workaround for OBS bug #1333
+    	local curr_transition = obs.obs_source_get_name(ct) -- Workaround for OBS bug #1333
+    	obs.obs_source_release(ct) -- Workaround for OBS bug #1333
+    	
+    	if set_transition ~= curr_transition then -- Workaround for OBS bug #1333
+			--if set_transition ~= default_transition_name then -- Workaround for OBS bug #1333
+				transition_playing = 1 -- Workaround for OBS bug #1333
 				local transitions = obs.obs_frontend_get_transitions()
 				local obj_transition = find_source_by_name_in_list(transitions, set_transition)
 				if obj_transition ~= nil then
@@ -219,13 +231,14 @@ function init_curr_scene()
 		if curr_scene_name == "" then
 			curr_scene_name = scene_name
 			obs.obs_source_release(currentScene)
-			transition_stoped()
+			--transition_stoped() -- Workaround for OBS bug #1333
 		end
 	end
 end
 
 function script_update(settings)
 	attempts = 0
+	transition_playing = 0 -- Workaround for OBS bug #1333
 	obs.timer_add(init_curr_scene, 1000)
 
 
