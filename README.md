@@ -18,11 +18,12 @@ Example:
 (2) Click "+" button and add script "obs-transition-connections.lua"  
 
 3. Configure OBS Transition Connections  
-(1) Select default transition  
-(2) Click "Add New Transition" button  
-(3) Select Source scene  
-(4) Select Target scene  
-(5) Select Transition  
+(1) Enable the script
+(2) Select default transition  
+(3) Click "Add New Transition" button  
+(4) Select Source scene  
+(5) Select Target scene  
+(6) Select Transition  
 *Repeat steps 3.2 - 3.5 to create additional transition connections*  
 ![Configure OBS Transition Connections](https://raw.githubusercontent.com/tomaae/obs-transition-connections/github-resources/obs_scripts_config.png)  
 *NOTE: Transition connections will not trigger for any target scenes with Transition Override active*  
