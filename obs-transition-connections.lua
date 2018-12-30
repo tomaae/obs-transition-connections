@@ -1,4 +1,5 @@
 obs = obslua
+script_enabled = false
 default_transition_name = ""
 curr_scene_name = ""
 transition_playing = 0 -- Workaround for OBS bug #1333
@@ -57,6 +58,10 @@ end
 
 -- Set current scene name
 function source_deactivated(cd)
+	if script_enabled == false then
+		return
+	end
+	
 	local currentScene = obs.obs_frontend_get_current_scene()
 	curr_scene_name = obs.obs_source_get_name(currentScene)
 	obs.obs_source_release(currentScene)
@@ -70,6 +75,10 @@ end
 
 -- Change transition if needed
 function source_activated(cd)
+	if script_enabled == false then
+		return
+	end
+	
 	if default_transition_name == "" then
 		return
 	end
@@ -93,11 +102,11 @@ function source_activated(cd)
 				i = i + 1
 			end
 			
-    	local ct = obs.obs_frontend_get_current_transition() -- Workaround for OBS bug #1333
-    	local curr_transition = obs.obs_source_get_name(ct) -- Workaround for OBS bug #1333
-    	obs.obs_source_release(ct) -- Workaround for OBS bug #1333
-    	
-    	if set_transition ~= curr_transition then -- Workaround for OBS bug #1333
+			local ct = obs.obs_frontend_get_current_transition() -- Workaround for OBS bug #1333
+			local curr_transition = obs.obs_source_get_name(ct) -- Workaround for OBS bug #1333
+			obs.obs_source_release(ct) -- Workaround for OBS bug #1333
+			
+			if set_transition ~= curr_transition then -- Workaround for OBS bug #1333
 			--if set_transition ~= default_transition_name then -- Workaround for OBS bug #1333
 				transition_playing = 1 -- Workaround for OBS bug #1333
 				local transitions = obs.obs_frontend_get_transitions()
@@ -163,6 +172,8 @@ end
 
 function script_properties()
 	props = obs.obs_properties_create()
+	
+	obs.obs_properties_add_bool(props, "script_enabled", "Enable")
 
 	local s = obs.obs_properties_add_list(props, "default_transition", "Default Transition", obs.OBS_COMBO_TYPE_EDITABLE, obs.OBS_COMBO_FORMAT_STRING)
 	local transitions = obs.obs_frontend_get_transitions()
@@ -241,8 +252,8 @@ function script_update(settings)
 	transition_playing = 0 -- Workaround for OBS bug #1333
 	obs.timer_add(init_curr_scene, 1000)
 
-
 	default_transition_name = obs.obs_data_get_string(settings, "default_transition")
+	script_enabled = obs.obs_data_get_bool(settings, "script_enabled")
 
 	transition_map_s = table_wipe(transition_map_s)
 	transition_map_t = table_wipe(transition_map_t)
